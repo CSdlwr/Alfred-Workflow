@@ -26,7 +26,7 @@ function parse_content() {
     basic_explains=$(echo $1 | $jq ".basic.explains | join(\"#\")" | sed -e 's/^"//g' -e 's/"$//g')
     web_kv=$(echo $1 | $jq "[.web[] | {\"key\": .key, \"value\": .value | join(\"; \")} | .key + \": \" + .value] | join(\"#\")" | sed -e 's/^"//g' -e 's/"$//g')
     #us_phonetic=$(echo $1 | $jq ".basic | to_entries | .[0].value" | sed 's/ //g')
-    phonetic=$(echo $1 | $jq ".basic.phonetic" | sed 's/ //g')
+    phonetic=$(echo $1 | $jq ".basic.phonetic" | sed -e 's/ //g' -e 's/^"//g' -e 's/"$//g')
 }
 
 function print_items() {
