@@ -44,7 +44,7 @@ function print_items() {
 
 function display() {
     echo "<?xml version=\"1.0\"?> <items>"
-    print_items "$us_phonetic" "us_phonetic"
+    #print_items "$us_phonetic" "us_phonetic"
     print_items "$phonetic" "phonetic"
     echo $IFS
     OLD_IFS=$IFS
