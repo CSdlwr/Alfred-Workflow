@@ -1,6 +1,6 @@
 # 调用有道http接口进行翻译
 
-#set -x
+set -x
 
 function init() {
     jq=/usr/local/bin/jq
@@ -22,9 +22,11 @@ function parse_content() {
         echo "Usage: parse_result \"api_content\", exit 100"
         exit 100
     fi
-    translation=$(echo $1 | $jq ".translation | join(\"; \")" | sed -e 's/^"//g' -e 's/"$//g')
+    translation=$(echo $1 | $jq ".translation | join(\"# \")" | sed -e 's/^"//g' -e 's/"$//g')
     basic_explains=$(echo $1 | $jq ".basic.explains | join(\"#\")" | sed -e 's/^"//g' -e 's/"$//g')
     web_kv=$(echo $1 | $jq "[.web[] | {\"key\": .key, \"value\": .value | join(\"; \")} | .key + \": \" + .value] | join(\"#\")" | sed -e 's/^"//g' -e 's/"$//g')
+    #us_phonetic=$(echo $1 | $jq ".basic | to_entries | .[0].value" | sed 's/ //g')
+    phonetic=$(echo $1 | $jq ".basic.phonetic" | sed 's/ //g')
 }
 
 function print_items() {
@@ -42,10 +44,12 @@ function print_items() {
 
 function display() {
     echo "<?xml version=\"1.0\"?> <items>"
-    print_items $translation "youdao translation"
+    print_items "$us_phonetic" "us_phonetic"
+    print_items "$phonetic" "phonetic"
     echo $IFS
     OLD_IFS=$IFS
     IFS='#'
+    print_items "$translation" "youdao translation"
     print_items "$basic_explains" "youdao dict"
     print_items "$web_kv" "web translation"
     IFS=$OLD_IFS
